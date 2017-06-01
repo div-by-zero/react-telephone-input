@@ -180,6 +180,9 @@ export var ReactTelephoneInput = React.createClass({
             return `+${text}`;
         }
 
+        var maxAvailableChars = (pattern.match(/\./g) || []).length
+        var textLimited = text.substring(0, maxAvailableChars)
+
         var formattedObject = reduce(pattern, function(acc, character) {
             if(acc.remainingText.length === 0) {
                 return acc;
@@ -196,7 +199,7 @@ export var ReactTelephoneInput = React.createClass({
                 formattedText: acc.formattedText + first(acc.remainingText),
                 remainingText: tail(acc.remainingText)
             };
-        }, {formattedText: '', remainingText: text.split('')});
+        }, {formattedText: '', remainingText: textLimited.split('')});
         return formattedObject.formattedText + formattedObject.remainingText.join('');
     },
 
@@ -383,7 +386,10 @@ export var ReactTelephoneInput = React.createClass({
             inputNumber = ''
         }
 
-        let selectedCountryGuess = this.guessSelectedCountry(inputNumber.replace(/\D/g, ''));
+        const  selectedCountryGuess = this.state
+            ? this.state.selectedCountry
+            : this.guessSelectedCountry(inputNumber.replace(/\D/g, ''));
+
         let selectedCountryGuessIndex = findIndex(allCountries, selectedCountryGuess);
         let formattedNumber = this.formatNumber(
             inputNumber.replace(/\D/g, ''), selectedCountryGuess ? selectedCountryGuess.format : null
@@ -529,8 +535,8 @@ export var ReactTelephoneInput = React.createClass({
     },
     getFlagStyle() {
         return {
-            width: 16,
-            height: 11,
+            width: 22,
+            height: 14,
             backgroundImage: `url(${this.props.flagsImagePath})`
         };
     },
