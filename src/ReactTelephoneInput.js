@@ -101,7 +101,8 @@ export var ReactTelephoneInput = React.createClass({
             onEnterKeyPress: function () {},
             preferredCountries: [],
             disabled: false,
-            placeholder: '+1 (702) 123-4567',
+//            placeholder: '+1 (702) 123-4567',
+            placeholder: '',
             autoComplete: 'tel',
             required: false,
         };
@@ -171,7 +172,8 @@ export var ReactTelephoneInput = React.createClass({
     },
     formatNumber(text, pattern) {
         if(!text || text.length === 0) {
-            return '+';
+//            return '+';
+            return '';
         }
 
         // for all strings with length less than 3, just return it (1, 2 etc.)
@@ -265,9 +267,10 @@ export var ReactTelephoneInput = React.createClass({
           return;
         }
         // need to put the highlight on the current selected country if the dropdown is going to open up
+        const country = find(this.props.onlyCountries, this.state.selectedCountry)
         this.setState({
             showDropDown: !this.state.showDropDown,
-            highlightCountry: find(this.props.onlyCountries, this.state.selectedCountry),
+            highlightCountry: country,
             highlightCountryIndex: findIndex(this.state.preferredCountries.concat(this.props.onlyCountries), this.state.selectedCountry)
         }, () => {
             // only need to scrool if the dropdown list is alive
@@ -341,6 +344,9 @@ export var ReactTelephoneInput = React.createClass({
         var currentSelectedCountry = this.state.selectedCountry;
         var nextSelectedCountry = find(this.props.onlyCountries, country);
 
+//        if (typeof this.props.onChangeCountry === 'function') {
+//            this.props.onChangeCountry(country)
+//        }
         // tiny optimization
         if(currentSelectedCountry.iso2 !== nextSelectedCountry.iso2) {
             var dialCodeRegex = RegExp('^(\\+' + currentSelectedCountry.dialCode + ')|\\+');
@@ -403,7 +409,8 @@ export var ReactTelephoneInput = React.createClass({
     },
     _fillDialCode() {
         // if the input is blank, insert dial code of the selected country
-        if(this.refs.numberInput.value === '+') {
+//        if(this.refs.numberInput.value === '+') {
+        if(this.refs.numberInput.value === '' || !this.refs.numberInput.value) {
             this.setState({formattedNumber: '+' + this.state.selectedCountry.dialCode});
         }
     },
@@ -565,6 +572,14 @@ export var ReactTelephoneInput = React.createClass({
         if(this.props.inputId) {
             otherProps.id = this.props.inputId
         }
+//                <div ref='flagDropDownButton' className={flagViewClasses} onKeyDown={this.handleKeydown} >
+//                    <div ref='selectedFlag' onClick={this.handleFlagDropdownClick} className='selected-flag' title={`${this.state.selectedCountry.name}: + ${this.state.selectedCountry.dialCode}`}>
+//                        <div className={inputFlagClasses} style={this.getFlagStyle()}>
+//                            <div className={arrowClasses}></div>
+//                        </div>
+//                    </div>
+//                    {this.state.showDropDown ? this.getCountryDropDownList() : ''}
+//                </div>
         return (
             <div className={classNames('react-tel-input', this.props.classNames, this.props.className)}>
                 <input
@@ -582,11 +597,9 @@ export var ReactTelephoneInput = React.createClass({
                     required={this.props.required}
                     placeholder={this.props.placeholder}
                     disabled={this.props.disabled} {...otherProps}/>
-                <div ref='flagDropDownButton' className={flagViewClasses} onKeyDown={this.handleKeydown} >
-                    <div ref='selectedFlag' onClick={this.handleFlagDropdownClick} className='selected-flag' title={`${this.state.selectedCountry.name}: + ${this.state.selectedCountry.dialCode}`}>
-                        <div className={inputFlagClasses} style={this.getFlagStyle()}>
-                            <div className={arrowClasses}></div>
-                        </div>
+                <div ref='flagDropDownButton' className={flagViewClasses}>
+                    <div ref='selectedFlag' className='selected-flag' title={`${this.state.selectedCountry.name}: + ${this.state.selectedCountry.dialCode}`}>
+                        <div className={inputFlagClasses} style={this.getFlagStyle()} />
                     </div>
                     {this.state.showDropDown ? this.getCountryDropDownList() : ''}
                 </div>
