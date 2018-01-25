@@ -208,7 +208,7 @@ export var ReactTelephoneInput = React.createClass({
                 remainingText: tail(acc.remainingText)
             };
         }, {formattedText: '', remainingText: textLimited.split('')});
-        console.log('input', text, 'output', formattedObject.formattedText + formattedObject.remainingText.join(''))
+//        console.log('input', text, 'output', formattedObject.formattedText + formattedObject.remainingText.join(''))
 //        return '+' + this.state.selectedCountry.dialCode + formattedObject.formattedText + formattedObject.remainingText.join('');
         return formattedObject.formattedText + formattedObject.remainingText.join('');
     },
@@ -615,6 +615,7 @@ export var ReactTelephoneInput = React.createClass({
                       maskChar={null}
                       value={typeof this.props.value === "undefined" ? "" : this.props.value}
                       onChange={(event) => this.props.onChange(event.target.value)}
+                      placeholder={this.props.placeholder}
                   />
                 <div ref='flagDropDownButton' className={flagViewClasses}>
                     <div ref='selectedFlag' className='selected-flag' title={`${this.state.selectedCountry.name}: + ${this.state.selectedCountry.dialCode}`}>
