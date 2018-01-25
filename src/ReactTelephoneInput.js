@@ -17,6 +17,7 @@ var isEqual = require('lodash/isEqual');
 // import lodash string methods
 var trim = require('lodash/trim');
 var startsWith = require('lodash/startsWith');
+var InputElement = require('react-input-mask');
 
 var React = require('react');
 var ReactDOM = require('react-dom');
@@ -90,6 +91,7 @@ export var ReactTelephoneInput = React.createClass({
         disabled: React.PropTypes.bool,
         pattern: React.PropTypes.string,
         required: React.PropTypes.bool,
+        name: React.PropTypes.string,
     },
     getDefaultProps() {
         return {
@@ -105,6 +107,7 @@ export var ReactTelephoneInput = React.createClass({
             placeholder: '',
             autoComplete: 'tel',
             required: false,
+            name: '',
         };
     },
     getNumber() {
@@ -113,14 +116,14 @@ export var ReactTelephoneInput = React.createClass({
     getValue() {
         return this.getNumber();
     },
-    componentDidMount() {
-        document.addEventListener('keydown', this.handleKeydown);
-
-        this._cursorToEnd(true);
-        if(typeof this.props.onChange === 'function') {
-            this.props.onChange(this.state.formattedNumber, this.state.selectedCountry);
-        }
-    },
+//    componentDidMount() {
+//        document.addEventListener('keydown', this.handleKeydown);
+//
+//        this._cursorToEnd(true);
+//        if(typeof this.props.onChange === 'function') {
+//            this.props.onChange(this.state.formattedNumber, this.state.selectedCountry);
+//        }
+//    },
     shouldComponentUpdate(nextProps, nextState) {
         return !isEqual(nextProps, this.props) || !isEqual(nextState, this.state);
     },
@@ -171,11 +174,14 @@ export var ReactTelephoneInput = React.createClass({
         }
     },
     formatNumber(text, pattern) {
+//        console.log('input', text)
         if(!text || text.length === 0) {
 //            return '+';
             return '';
         }
-
+        if (text === this.state.selectedCountry.dialCode) {
+            return '+' + this.state.selectedCountry.dialCode
+        }
         // for all strings with length less than 3, just return it (1, 2 etc.)
         // also return the same text if the selected country has no fixed format
         if((text && text.length < 2) || !pattern || !this.props.autoFormat) {
@@ -202,6 +208,8 @@ export var ReactTelephoneInput = React.createClass({
                 remainingText: tail(acc.remainingText)
             };
         }, {formattedText: '', remainingText: textLimited.split('')});
+        console.log('input', text, 'output', formattedObject.formattedText + formattedObject.remainingText.join(''))
+//        return '+' + this.state.selectedCountry.dialCode + formattedObject.formattedText + formattedObject.remainingText.join('');
         return formattedObject.formattedText + formattedObject.remainingText.join('');
     },
 
@@ -368,14 +376,14 @@ export var ReactTelephoneInput = React.createClass({
           this.setState({showDropDown: false});
         }
     },
-    handleInputFocus() {
-        // trigger parent component's onFocus handler
-        if(typeof this.props.onFocus === 'function') {
-            this.props.onFocus(this.state.formattedNumer, this.state.selectedCountry);
-        }
-
-        this._fillDialCode();
-    },
+//    handleInputFocus() {
+//        // trigger parent component's onFocus handler
+//        if(typeof this.props.onFocus === 'function') {
+//            this.props.onFocus(this.state.formattedNumer, this.state.selectedCountry);
+//        }
+//
+//        this._fillDialCode();
+//    },
     _mapPropsToState(props, firstCall = false) {
         let inputNumber;
 
@@ -580,23 +588,34 @@ export var ReactTelephoneInput = React.createClass({
 //                    </div>
 //                    {this.state.showDropDown ? this.getCountryDropDownList() : ''}
 //                </div>
+//                <input
+//                    onChange={this.handleInput}
+//                    onClick={this.handleInputClick}
+//                    onFocus={this.handleInputFocus}
+//                    onBlur={this.handleInputBlur}
+//                    onKeyDown={this.handleInputKeyDown}
+//                    value={this.state.formattedNumber}
+//                    ref="numberInput"
+//                    type="tel"
+//                    className={inputClasses}
+//                    autoComplete={this.props.autoComplete}
+//                    pattern={this.props.pattern}
+//                    required={this.props.required}
+//                    placeholder={this.props.placeholder}
+//                    disabled={this.props.disabled} {...otherProps}/>
+//        console.log('this.state.selectedCountry', this.state.selectedCountry)
+        const { format, dialCode } = this.state.selectedCountry
+        const mask = format.replace('.', dialCode).replace(/\./g, '9')
         return (
             <div className={classNames('react-tel-input', this.props.classNames, this.props.className)}>
-                <input
-                    onChange={this.handleInput}
-                    onClick={this.handleInputClick}
-                    onFocus={this.handleInputFocus}
-                    onBlur={this.handleInputBlur}
-                    onKeyDown={this.handleInputKeyDown}
-                    value={this.state.formattedNumber}
-                    ref="numberInput"
-                    type="tel"
-                    className={inputClasses}
-                    autoComplete={this.props.autoComplete}
-                    pattern={this.props.pattern}
-                    required={this.props.required}
-                    placeholder={this.props.placeholder}
-                    disabled={this.props.disabled} {...otherProps}/>
+                  <InputElement
+                      type='text'
+                      mask={mask}
+                      name={this.props.name}
+                      maskChar={null}
+                      value={typeof this.props.value === "undefined" ? "" : this.props.value}
+                      onChange={(event) => this.props.onChange(event.target.value)}
+                  />
                 <div ref='flagDropDownButton' className={flagViewClasses}>
                     <div ref='selectedFlag' className='selected-flag' title={`${this.state.selectedCountry.name}: + ${this.state.selectedCountry.dialCode}`}>
                         <div className={inputFlagClasses} style={this.getFlagStyle()} />
