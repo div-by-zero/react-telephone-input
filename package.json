@@ -1,5 +1,5 @@
 {
-  "name": "@oledm/react-telephone-input",
+  "name": "react-telephone-input",
   "version": "4.0.11",
   "description": "React component for entering and validating international telephone numbers",
   "main": "lib/ReactTelephoneInput.js",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mukeshsoni/react-telephone-input"
+    "url": "https://github.com/perxteam/react-telephone-input"
   },
   "keywords": [
     "react-component",
