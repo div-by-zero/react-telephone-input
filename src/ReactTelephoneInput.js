@@ -55,6 +55,9 @@ function isNumberValid(inputNumber) {
     });
 }
 
+const parseMask = ({ dialCode, format }) => Array.from(dialCode)
+  .reduce((result, current) => result.replace('.', current), format)
+  .replace(/\./g, '9')
 
 export var ReactTelephoneInput = React.createClass({
     getInitialState() {
@@ -605,7 +608,8 @@ export var ReactTelephoneInput = React.createClass({
 //                    disabled={this.props.disabled} {...otherProps}/>
 //        console.log('this.state.selectedCountry', this.state.selectedCountry)
         const { format, dialCode } = this.state.selectedCountry
-        const mask = format.replace('.', dialCode).replace(/\./g, '9')
+        const mask = parseMask({ dialCode, format })
+
         return (
             <div className={classNames('react-tel-input', this.props.classNames, this.props.className)}>
                   <InputElement
