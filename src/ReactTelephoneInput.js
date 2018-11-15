@@ -182,7 +182,7 @@ export var ReactTelephoneInput = React.createClass({
 //            return '+';
             return '';
         }
-        if (text === this.state.selectedCountry.dialCode) {
+        if (!!this.state && text === this.state.selectedCountry.dialCode) {
             return '+' + this.state.selectedCountry.dialCode
         }
         // for all strings with length less than 3, just return it (1, 2 etc.)
