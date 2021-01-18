@@ -291,7 +291,7 @@ export var ReactTelephoneInput = React.createClass({
         });
     },
     handleInput(event) {
-        var formattedNumber = '+', newSelectedCountry = this.state.selectedCountry, freezeSelection = this.state.freezeSelection;
+      var formattedNumber = '+', newSelectedCountry = this.state.selectedCountry, freezeSelection = this.state.freezeSelection;
 
         // if the input is the same as before, must be some special key like enter etc.
         if(event.target.value === this.state.formattedNumber) {
@@ -316,7 +316,7 @@ export var ReactTelephoneInput = React.createClass({
                 freezeSelection = false;
             }
             // let us remove all non numerals from the input
-            formattedNumber = this.formatNumber(inputNumber, newSelectedCountry.format);
+            formattedNumber = this.formatNumber(inputNumber, this.props.pattern || newSelectedCountry.format);
         }
 
         var caretPosition = event.target.selectionStart;
@@ -362,7 +362,7 @@ export var ReactTelephoneInput = React.createClass({
         if(currentSelectedCountry.iso2 !== nextSelectedCountry.iso2) {
             var dialCodeRegex = RegExp('^(\\+' + currentSelectedCountry.dialCode + ')|\\+');
             var newNumber = this.state.formattedNumber.replace(dialCodeRegex, '+' + nextSelectedCountry.dialCode);
-            var formattedNumber = this.formatNumber(newNumber.replace(/\D/g, ''), nextSelectedCountry.format);
+            var formattedNumber = this.formatNumber(newNumber.replace(/\D/g, ''), this.props.pattern || nextSelectedCountry.format);
 
             this.setState({
                 showDropDown: false,
@@ -408,8 +408,9 @@ export var ReactTelephoneInput = React.createClass({
             : this.guessSelectedCountry(inputNumber.replace(/\D/g, ''));
 
         let selectedCountryGuessIndex = findIndex(allCountries, selectedCountryGuess);
+        const selectedCountryGuessFormat = selectedCountryGuess ? selectedCountryGuess.format : null;
         let formattedNumber = this.formatNumber(
-            inputNumber.replace(/\D/g, ''), selectedCountryGuess ? selectedCountryGuess.format : null
+            inputNumber.replace(/\D/g, ''), props.pattern || selectedCountryGuessFormat
         );
 
         return {
@@ -608,7 +609,8 @@ export var ReactTelephoneInput = React.createClass({
 //                    disabled={this.props.disabled} {...otherProps}/>
 //        console.log('this.state.selectedCountry', this.state.selectedCountry)
         const { format, dialCode } = this.state.selectedCountry
-        const mask = parseMask({ dialCode, format })
+        const resolvedFormat = this.props.pattern || format;
+        const mask = parseMask({ dialCode, format: resolvedFormat })
 
         return (
             <div className={classNames('react-tel-input', this.props.classNames, this.props.className)}>
