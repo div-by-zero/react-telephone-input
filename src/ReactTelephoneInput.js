@@ -618,6 +618,7 @@ export var ReactTelephoneInput = React.createClass({
                       type='text'
                       mask={mask}
                       name={this.props.name}
+                      id={this.props.name}
                       maskChar={null}
                       value={typeof this.props.value === "undefined" ? "" : this.props.value}
                       onChange={(event) => this.props.onChange(event.target.value)}
