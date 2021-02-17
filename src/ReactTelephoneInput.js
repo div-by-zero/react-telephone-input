@@ -403,9 +403,7 @@ export var ReactTelephoneInput = React.createClass({
             inputNumber = ''
         }
 
-        const  selectedCountryGuess = this.state
-            ? this.state.selectedCountry
-            : this.guessSelectedCountry(inputNumber.replace(/\D/g, ''));
+        var selectedCountryGuess = find(allCountries, {iso2: props.defaultCountry}) || props.onlyCountries[0];
 
         let selectedCountryGuessIndex = findIndex(allCountries, selectedCountryGuess);
         const selectedCountryGuessFormat = selectedCountryGuess ? selectedCountryGuess.format : null;
